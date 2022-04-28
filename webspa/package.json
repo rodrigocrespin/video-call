@@ -3,10 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --open",
+    "start:prod": "ng serve --open --prod",
+    "config": "ts-node -O '{\"module\": \"commonjs\"}' ./config.index.ts",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "build:ci": "npm run config && ng build --prod --sourceMap=false --base-href /video-call/",
+    "build:prod": "ng build --prod",
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI --reporters=progress,junit"
   },
   "private": true,
   "dependencies": {
