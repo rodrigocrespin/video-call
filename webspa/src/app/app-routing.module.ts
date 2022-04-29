@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AppContainerComponent } from './modules/main/shell/app-container/app-container.component';
+import { AppContainerComponent } from './modules/shell/app-container/app-container.component';
 
 const routes: Routes = [
   {

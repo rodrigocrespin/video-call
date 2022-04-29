@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MainRoutingModule } from './main-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
-import { ShellModule } from './shell/shell.module';
 
 @NgModule({
   declarations: [
@@ -12,8 +11,7 @@ import { ShellModule } from './shell/shell.module';
   imports: [
     CommonModule,
     MainRoutingModule,
-    ReactiveFormsModule,
-    ShellModule
+    ReactiveFormsModule
   ]
 })
 export class MainModule { }
