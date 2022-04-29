@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using VideoCall.Api.Config;
+using VideoCall.Application;
 
 namespace VideoCall.Api
 {
@@ -44,6 +45,11 @@ namespace VideoCall.Api
             services.AddHealthChecks();
 
             services.AddOpenApiDocument(cfg => cfg.PostProcess = d => d.Info.Title = "Video Call Api");
+
+            services.Configure<TwilioConfig>(configuration.GetSection(TwilioConfig.ConfigKey));
+
+            services.AddScoped<IRoomMapper, RoomMapper>();
+            services.AddScoped<IVideoCallService, VideoCallService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

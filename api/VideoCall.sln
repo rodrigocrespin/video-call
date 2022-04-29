@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.31829.152
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCall.Api", "VideoCall.Api\VideoCall.Api.csproj", "{BD1A8B0F-43DB-442C-9ADD-0910E46F9ABB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCall.Tests", "VideoCall.Tests\VideoCall.Tests.csproj", "{D381C019-63B0-4D2A-944D-54719DA95D1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCall.Application", "VideoCall.Application\VideoCall.Application.csproj", "{9AF02A47-8EBC-4E60-BC8E-973959BC5A40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{BD1A8B0F-43DB-442C-9ADD-0910E46F9ABB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD1A8B0F-43DB-442C-9ADD-0910E46F9ABB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD1A8B0F-43DB-442C-9ADD-0910E46F9ABB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D381C019-63B0-4D2A-944D-54719DA95D1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D381C019-63B0-4D2A-944D-54719DA95D1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D381C019-63B0-4D2A-944D-54719DA95D1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D381C019-63B0-4D2A-944D-54719DA95D1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AF02A47-8EBC-4E60-BC8E-973959BC5A40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AF02A47-8EBC-4E60-BC8E-973959BC5A40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AF02A47-8EBC-4E60-BC8E-973959BC5A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AF02A47-8EBC-4E60-BC8E-973959BC5A40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
