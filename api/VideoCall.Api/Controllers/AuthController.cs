@@ -14,6 +14,13 @@ namespace VideoCall.Api.Controllers
             this.service = service;
         }
 
+        [HttpGet("token")]
+        [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+        public ActionResult<TokenResponse> Get()
+        {
+            return Ok(new TokenResponse(service.GetJwt()));
+        }
+
         [HttpGet("token/{identity}")]
         [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
         public ActionResult<TokenResponse> Get(string identity)

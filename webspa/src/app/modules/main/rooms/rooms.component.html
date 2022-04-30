@@ -1,0 +1,24 @@
+<ng-container *ngIf="model$ | async as model">
+  <h2>Join a room</h2>
+  <p>Create a room by naming it:</p>
+  <form [formGroup]="form" (ngSubmit)="createRoom()">
+    <div class="d-flex flex-column">
+      <div class="form-group">
+        <input class="form-control" formControlName="roomName" type="text">
+      </div>
+      <button [disabled]="model.creatingRoom" class="btn btn-primary" type="submit">
+        <span *ngIf="!model.creatingRoom">Create</span>
+        <span *ngIf="model.creatingRoom">Creating...</span>
+      </button>
+    </div>
+  </form>
+
+  <h2>Available rooms</h2>
+  <div class="card-container">
+    <a *ngFor="let room of model.rooms" class="card" [routerLink]="['/room', room.name]">
+      <span class="badge badge-sm badge-secondary mr-1">{{room.participantCount || 0}}/{{room.maxParticipants || 0}}</span>
+      <span>{{room.name}}</span>
+      <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+    </a>
+  </div>
+</ng-container>
