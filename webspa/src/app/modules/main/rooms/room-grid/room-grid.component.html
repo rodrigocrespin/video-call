@@ -1,1 +1,5 @@
-<div #list></div>
+<div class="d-flex flex-column flex-wrap">
+  <ng-content></ng-content>
+  <div *ngIf="isAlone">You are alone</div>
+  <div #list></div>
+</div>

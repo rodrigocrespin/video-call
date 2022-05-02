@@ -21,7 +21,7 @@ import { Subject } from 'rxjs';
   selector: 'app-room-grid',
   templateUrl: './room-grid.component.html',
   styleUrls: ['./room-grid.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomGridComponent {
   @ViewChild('list', { static: false }) listRef: ElementRef;

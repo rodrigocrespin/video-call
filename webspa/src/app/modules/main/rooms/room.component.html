@@ -1,7 +1,8 @@
 <div class="content" role="main">
-  <div class="d-flex flex-column">
-    <app-camera></app-camera>
-    <app-room-grid (participantsChanged)="onParticipantsChanged($event)"></app-room-grid>
+  <div class="d-flex flex-column flex-wrap">
+    <app-room-grid (participantsChanged)="onParticipantsChanged($event)">
+      <app-camera></app-camera>
+    </app-room-grid>
   </div>
   <div class="card-container">
     <button class="btn btn-danger" type="button" (click)="onLeaveRoom(true)">Leave room</button>

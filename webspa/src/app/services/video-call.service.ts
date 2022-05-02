@@ -18,19 +18,19 @@ export class VideoCallService {
     this.roomsUpdated$ = this.roomBroadcast.asObservable();
   }
 
-  private async getAuthToken() {
+  private async getAuthToken(identity: string) {
     const auth =
       await this.http
-        .get<AuthToken>(`${environment.apiUrl}/api/auth/token`)
+        .get<AuthToken>(`${environment.apiUrl}/api/auth/token/${identity}`)
         .toPromise();
 
     return auth.token;
   }
 
-  async joinOrCreateRoom(name: string, tracks: LocalTrack[]) {
+  async joinOrCreateRoom(name: string, identity: string, tracks: LocalTrack[]) {
     let room: Room = null;
     try {
-      const token = await this.getAuthToken();
+      const token = await this.getAuthToken(identity);
       room =
         await connect(
           token, {

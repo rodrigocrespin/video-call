@@ -26,13 +26,14 @@ export class RoomsComponent implements AfterViewInit {
 
   constructor(fb: FormBuilder, private roomsService: RoomsService, private router: Router) {
     this.form = fb.group({
+      name: [null, Validators.required],
       roomName: [null, Validators.required]
     });
 
     const rooms$ = this.refreshRoomsSubject.pipe(switchMapTo(roomsService.getAll()));
     const creatingRoom$ = this.createRoomSubject.pipe(
       switchMap(name => this.roomsService.create(name).pipe(
-        tap(r => this.router.navigate(['/room', r.name])),
+        tap(r => this.router.navigate(['/room', r.name], { queryParams: { name: this.form.controls.name.value }})),
         mapTo(false),
         startWith(true),
       )),

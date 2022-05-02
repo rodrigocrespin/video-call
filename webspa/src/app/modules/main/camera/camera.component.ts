@@ -1,25 +1,18 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  ElementRef, EventEmitter,
-  Output,
+  ElementRef,
   Renderer2,
   ViewChild
 } from '@angular/core';
-import { createLocalTracks, LocalTrack, LocalVideoTrack } from 'twilio-video';
-import { from, Observable, Subject } from 'rxjs';
-import { map, mapTo, startWith, switchMap, tap } from 'rxjs/operators';
-
-interface CameraModel {
-  initializing: boolean;
-}
+import { createLocalVideoTrack, LocalTrack, LocalVideoTrack } from 'twilio-video';
 
 @Component({
   selector: 'app-camera',
   templateUrl: './camera.component.html',
   styleUrls: ['./camera.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CameraComponent implements AfterViewInit {
   @ViewChild('preview', { static: false }) previewElement?: ElementRef;
@@ -28,37 +21,28 @@ export class CameraComponent implements AfterViewInit {
     return this.localTracks;
   }
 
-  model$: Observable<CameraModel>;
+  isInitializing: boolean;
 
   private videoTrack?: LocalVideoTrack;
   private localTracks: LocalTrack[] = [];
 
-  private initializeSubject = new Subject<MediaDeviceInfo>();
-
-  constructor(private readonly renderer: Renderer2) {
-    const initializing$ = this.initializeSubject.pipe(
-      switchMap(deviceInfo => from(this.initializeDevice(deviceInfo?.kind, deviceInfo?.deviceId)).pipe(
-        mapTo(false),
-        startWith(true),
-      )),
-      startWith(true)
-    );
-    this.model$ = initializing$.pipe(map(initializing => ({ initializing })));
+  constructor(private readonly renderer: Renderer2, private cd: ChangeDetectorRef) {
   }
 
   async ngAfterViewInit() {
     if (this.previewElement && this.previewElement.nativeElement) {
-      this.initializeSubject.next();
+      //this.initializeSubject.next();
+      await this.initializeDevice();
     }
   }
 
-  initializePreview(deviceInfo?: MediaDeviceInfo) {
-    this.initializeSubject.next(deviceInfo);
+  async initializePreview(deviceId: string) {
+    await this.initializeDevice(deviceId);
   }
 
   async showPreviewCamera() {
-    await this.initializePreview();
-    return this.tracks;
+    await this.initializeDevice();
+    return this.videoTrack;
   }
 
   finalizePreview() {
@@ -66,35 +50,37 @@ export class CameraComponent implements AfterViewInit {
       if (this.videoTrack) {
         this.videoTrack.detach().forEach(element => element.remove());
       }
+      this.videoTrack = null;
     } catch (e) {
       console.error(e);
     }
   }
 
-  private async initializeDevice(kind?: MediaDeviceKind, deviceId?: string) {
-    this.finalizePreview();
+  private async initializeDevice(deviceId?: string) {
+    try {
+      this.isInitializing = true;
 
-    this.localTracks = kind && deviceId
-      ? await this.initializeTracks(kind, deviceId)
-      : await this.initializeTracks();
+      this.finalizePreview();
 
-    this.videoTrack = this.localTracks.find(t => t.kind === 'video') as LocalVideoTrack;
-    const videoElement = this.videoTrack.attach();
-    this.renderer.setStyle(videoElement, 'height', '100%');
-    //this.renderer.setStyle(videoElement, 'width', '100%');
-    this.renderer.appendChild(this.previewElement!.nativeElement, videoElement);
+      this.videoTrack = deviceId
+        ? await createLocalVideoTrack({ deviceId })
+        : await createLocalVideoTrack();
+
+      const videoElement = this.videoTrack.attach();
+      this.renderer.setStyle(videoElement, 'height', '100%');
+      //this.renderer.setStyle(videoElement, 'width', '100%');
+      this.removeNodeChildren(this.previewElement);
+      this.renderer.appendChild(this.previewElement.nativeElement, videoElement);
+    } finally {
+      this.isInitializing = false;
+      this.cd.detectChanges();
+    }
   }
 
-  private initializeTracks(kind?: MediaDeviceKind, deviceId?: string) {
-    if (kind) {
-      switch (kind) {
-        case 'audioinput':
-          return createLocalTracks({ audio: { deviceId }, video: true });
-        case 'videoinput':
-          return createLocalTracks({ audio: true, video: { deviceId } });
-      }
+  private removeNodeChildren(el: ElementRef): void {
+    const childElements = el.nativeElement.children;
+    for (let child of childElements) {
+      this.renderer.removeChild(el.nativeElement, child);
     }
-
-    return createLocalTracks({ audio: true, video: true });
   }
 }

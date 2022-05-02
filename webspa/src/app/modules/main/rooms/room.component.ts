@@ -1,15 +1,15 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
-import { Room, LocalTrack, LocalVideoTrack, LocalAudioTrack, RemoteParticipant } from 'twilio-video';
+import { createLocalAudioTrack, Room, LocalTrack, LocalVideoTrack, LocalAudioTrack, RemoteParticipant } from 'twilio-video';
 import { VideoCallService } from '../../../services/video-call.service';
 import { RoomGridComponent } from './room-grid/room-grid.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, first, map } from 'rxjs/operators';
+import { filter, first, map, switchMap } from 'rxjs/operators';
 import { CameraComponent } from '../camera/camera.component';
 
 @Component({
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoomComponent implements AfterViewInit {
   activeRoom: Room;
@@ -26,7 +26,14 @@ export class RoomComponent implements AfterViewInit {
       filter((id) => id)
     );
 
-    id$.pipe(first()).subscribe(id => this.onRoomChanged(id));
+    const identity$ = this.route.queryParams.pipe(
+      map(params => params.name)
+    );
+
+    id$.pipe(
+      first(),
+      switchMap(id => identity$.pipe(map(identity => ({ id, identity }))))
+    ).subscribe(m => this.onRoomChanged(m.id, m.identity));
   }
 
   async onLeaveRoom(_: boolean) {
@@ -39,17 +46,20 @@ export class RoomComponent implements AfterViewInit {
     await this.router.navigate(['/']);
   }
 
-  async onRoomChanged(roomName: string) {
+  async onRoomChanged(roomName: string, identity: string) {
     if (roomName) {
       if (this.activeRoom) {
         this.activeRoom.disconnect();
       }
 
-      const tracks = await this.camera.showPreviewCamera();
+      const tracks = await Promise.all([
+        createLocalAudioTrack(),
+        this.camera.showPreviewCamera()
+      ]);
 
       this.activeRoom =
         await this.videoCallService
-          .joinOrCreateRoom(roomName, tracks);
+          .joinOrCreateRoom(roomName, identity, tracks);
 
       this.roomGrid.initialize(this.activeRoom.participants);
       this.registerRoomEvents();

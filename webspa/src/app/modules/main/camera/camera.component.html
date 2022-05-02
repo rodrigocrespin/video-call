@@ -1,5 +1,3 @@
-<ng-container *ngIf="model$ | async as model">
-  <div id="preview" #preview style="height: 35vh">
-    <div *ngIf="model.initializing">Loading preview... Please wait.</div>
-  </div>
-</ng-container>
+<div id="preview" #preview style="height: 35vh">
+  <div *ngIf="isInitializing">Loading preview... Please wait.</div>
+</div>
