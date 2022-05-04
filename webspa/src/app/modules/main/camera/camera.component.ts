@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   Renderer2,
@@ -12,7 +12,7 @@ import { createLocalVideoTrack, LocalTrack, LocalVideoTrack } from 'twilio-video
   selector: 'app-camera',
   templateUrl: './camera.component.html',
   styleUrls: ['./camera.component.scss'],
-  //changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class CameraComponent implements AfterViewInit {
   @ViewChild('preview', { static: false }) previewElement?: ElementRef;
@@ -26,12 +26,11 @@ export class CameraComponent implements AfterViewInit {
   private videoTrack?: LocalVideoTrack;
   private localTracks: LocalTrack[] = [];
 
-  constructor(private readonly renderer: Renderer2, private cd: ChangeDetectorRef) {
+  constructor(private readonly renderer: Renderer2) {
   }
 
   async ngAfterViewInit() {
     if (this.previewElement && this.previewElement.nativeElement) {
-      //this.initializeSubject.next();
       await this.initializeDevice();
     }
   }
@@ -73,7 +72,6 @@ export class CameraComponent implements AfterViewInit {
       this.renderer.appendChild(this.previewElement.nativeElement, videoElement);
     } finally {
       this.isInitializing = false;
-      this.cd.detectChanges();
     }
   }
 
