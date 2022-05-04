@@ -50,6 +50,8 @@ namespace VideoCall.Api
 
             services.AddScoped<IRoomMapper, RoomMapper>();
             services.AddScoped<IVideoCallService, VideoCallService>();
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +83,8 @@ namespace VideoCall.Api
                     // Exclude all checks and return a 200-Ok.
                     Predicate = (_) => false
                 });
+
+                endpoints.MapHub<NotificationHub>("/notificationHub");
             });
         }
     }

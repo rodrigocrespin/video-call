@@ -5,6 +5,7 @@ import { RoomGridComponent } from './room-grid/room-grid.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, first, map, switchMap } from 'rxjs/operators';
 import { CameraComponent } from '../camera/camera.component';
+import { NotificationListenerService } from '../../../services/notification-listener.service';
 
 @Component({
   templateUrl: './room.component.html',
@@ -17,7 +18,7 @@ export class RoomComponent implements AfterViewInit {
   @ViewChild(CameraComponent) camera: CameraComponent;
   @ViewChild(RoomGridComponent) roomGrid: RoomGridComponent;
 
-  constructor(private route: ActivatedRoute, private router: Router, private videoCallService: VideoCallService) {
+  constructor(private route: ActivatedRoute, private router: Router, private videoCallService: VideoCallService, private notificationService: NotificationListenerService) {
   }
 
   ngAfterViewInit(): void {
@@ -63,6 +64,8 @@ export class RoomComponent implements AfterViewInit {
 
       this.roomGrid.initialize(this.activeRoom.participants);
       this.registerRoomEvents();
+
+      await this.notificationService.notificationHub.send('RoomsUpdated', true);
     }
   }
 

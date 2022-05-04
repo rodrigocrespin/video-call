@@ -1,7 +1,7 @@
 import { connect, ConnectOptions, LocalTrack, Room } from 'twilio-video';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ReplaySubject , Observable } from 'rxjs';
+import { ReplaySubject, Observable, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 interface AuthToken {
@@ -11,6 +11,7 @@ interface AuthToken {
 @Injectable({ providedIn: 'root' })
 export class VideoCallService {
   roomsUpdated$: Observable<boolean>;
+  refreshRoomsSubject = new Subject();
 
   private roomBroadcast = new ReplaySubject<boolean>();
 
@@ -51,5 +52,6 @@ export class VideoCallService {
 
   nudge() {
     this.roomBroadcast.next(true);
+    this.refreshRoomsSubject.next();
   }
 }

@@ -2,9 +2,10 @@ import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RoomsService } from '../../../services/rooms.service';
 import { Room } from '../../../models/room';
-import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { combineLatest, merge, Observable, Subject } from 'rxjs';
 import { map, mapTo, startWith, switchMap, switchMapTo, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { VideoCallService } from '../../../services/video-call.service';
 
 interface RoomsModel {
   creatingRoom: boolean;
@@ -24,13 +25,13 @@ export class RoomsComponent implements AfterViewInit {
   private createRoomSubject = new Subject<string>();
   private refreshRoomsSubject = new Subject();
 
-  constructor(fb: FormBuilder, private roomsService: RoomsService, private router: Router) {
+  constructor(fb: FormBuilder, private roomsService: RoomsService, private router: Router, private videoCallService: VideoCallService) {
     this.form = fb.group({
       name: [null, Validators.required],
       roomName: [null, Validators.required]
     });
 
-    const rooms$ = this.refreshRoomsSubject.pipe(switchMapTo(roomsService.getAll()));
+    const rooms$ = merge(this.refreshRoomsSubject, this.videoCallService.refreshRoomsSubject).pipe(switchMapTo(roomsService.getAll()));
     const creatingRoom$ = this.createRoomSubject.pipe(
       switchMap(name => this.roomsService.create(name).pipe(
         tap(r => this.router.navigate(['/room', r.name], { queryParams: { name: this.form.controls.name.value }})),
